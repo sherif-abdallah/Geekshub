@@ -32,16 +32,11 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-PRODUCTION = False
+PRODUCTION = True
 
 
-DOMAIN = "ac69-41-68-30-187.ngrok.io"
-
-HTTPS = "https://" + DOMAIN
-HTTP = "http://" + DOMAIN
 
 ALLOWED_HOSTS = [
-    '*',
     os.environ.get('HOST'),
 ]
 
