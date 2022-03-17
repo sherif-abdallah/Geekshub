@@ -1,0 +1,185 @@
+{% extends 'home_base.html' %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'comments.css' %}">
+<style>
+    #mobile_space{
+      display: none!important;
+    }
+    #delete-comment-button {
+      background-color: Transparent;
+      border: none;
+      cursor:pointer;
+      font-size: large;
+      outline: none;
+  }
+  @media screen and (max-width: 700px) {
+    #notify-card{
+      margin-left: 0em!important;
+      border: solid 0.1px #777;
+    }
+    #mobile_space{
+      display:inline!important;
+    }
+}
+    #notify-card{
+      margin-left: -4em;
+    }
+
+  </style>
+  <main>
+    <div class="container">
+      <div class="col-9">
+
+
+
+            {% for notification in notifications %}
+
+            {% if notification.notification_type == 3 %}
+            <div id="notify-card" class="card" >
+              <div class="top">
+                <a href="{% url 'accounts:profile' notification.sender.id %}">
+                <div class="userDetails">
+                  <div class="profilepic">
+                    <div class="profile_img">
+                      <div class="image">
+                        {% for notifyer_image in notifyers_image %}
+                        {% if notifyer_image.author.id == notification.sender.id %}
+                        <img src="{{ notifyer_image.image.url }}" alt="">
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                  <h3><strong>{{ notification.sender.username }} :</strong> {{ notification.text_preview }}</h3>
+                </div>
+                <h5 class="postTime" id="timer-{{notification.id}}" style="padding: 0.1em;">{{ notification.date }}</h5>
+              </a>
+              </div>
+            </div>
+            <br id="mobile_space">
+            <br id="mobile_space">
+            {% endif %}
+            {% if notification.notification_type == 2 or notification.notification_type == 1 %}
+            <div id="notify-card" class="card" >
+              <div class="top">
+              <a href="{% if notification.notification_type == 2 %}{% url 'posts:post' notification.post.id %}#timer-{{notification.comment.id}}{% else %}{% url 'posts:post' notification.post.id %}{% endif %}">
+                <div class="userDetails">
+                  <div class="profilepic">
+                    <div class="profile_img">
+                      <div class="image">
+                        {% for notifyer_image in notifyers_image %}
+                        {% if notifyer_image.author.id == notification.sender.id %}
+                        <img src="{{ notifyer_image.image.url }}" alt="">
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                  <h3><strong>{{ notification.sender.username }} :</strong> {{ notification.text_preview }}</h3>
+                </div>
+                <h5 class="postTime" id="timer-{{notification.id}}" style="padding: 0.1em;">{{ notification.date }}</h5>
+              </a>
+              </div>
+            </div>
+
+            <br id="mobile_space">
+            <br id="mobile_space">
+            {% endif %}
+            <script>
+              function doTime(then) {
+      // Convert Timezone to egypt
+      function websiteTimezonetoEgypt(offset){
+        var b=new Date()
+        var utc=b.getTime()+(b.getTimezoneOffset()*60000);
+        var time=new Date(utc+(3600000*offset));
+        return time.toLocaleString();
+    
+      }
+
+      now = new Date(websiteTimezonetoEgypt('+2'));
+      then = new Date(then);
+      difference = (now - then);
+
+    
+      years = Math.floor(difference / (60 * 60 * 1000 * 24 * 365) * 1);  
+      days = Math.floor(difference / (60 * 60 * 1000 * 24) * 1);
+      hours = Math.floor((difference % (60 * 60 * 1000 * 24)) / (60 * 60 * 1000) * 1);
+      mins = Math.floor(((difference % (60 * 60 * 1000 * 24)) % (60 * 60 * 1000)) / (60 * 1000) * 1);
+
+      if (years != 0) {
+        document.getElementById('timer-{{notification.id}}').innerHTML = years + ' Years ago';
+      }
+      if (years == 0 && days != 0) {
+        document.getElementById('timer-{{notification.id}}').innerHTML = days + ' Days ago';
+        
+      }
+      if (years == 0 && days == 0 && hours != 0) {
+        document.getElementById('timer-{{notification.id}}').innerHTML = hours + ' Hours ago';
+        
+      }
+      if (years == 0 && days == 0 && hours == 0 && mins != 0) {
+        document.getElementById('timer-{{notification.id}}').innerHTML = mins + ' Minutes ago';
+        
+      }
+      if (years == 0 && days == 0 && hours == 0 && mins == 0) {
+        document.getElementById('timer-{{notification.id}}').innerHTML = "Justnow";
+        
+      }
+    
+      
+    
+    }
+
+    doTime('{{ notification.date }}');
+
+    </script>
+            {% endfor %}
+
+        
+      
+
+      </div>
+      <div class="col-3">
+        <h4>Top Followers</h4>
+        {% for suggestion in suggestions_id %}
+        {% for suggestion_data in suggestions_data %}
+        {% if suggestion_data.id == suggestion %}      
+        <div class="card" style="margin: 0.1px;">
+          <div class="top">
+            <div class="userDetails">
+              <div class="profilepic">
+                <div class="profile_img">
+                  <div class="image">
+                    
+                    {% for image in suggestions_image %}
+                    {% if image.author.id == suggestion_data.id  %}
+                    <a href="{% url 'accounts:profile' suggestion_data.id %}">
+                    <img src="{{ image.image.url }}" alt="">
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+              <a href="{% url 'accounts:profile' suggestion_data.id %}">
+              <h3>{{ suggestion_data.username }}<br><span>Popular</span></h3>
+              </a>
+            </div>
+            <!-- <div>
+              <a class="follow">Follow</a>
+            </div> -->
+          </div>
+        </div>
+        {% endif %}
+        
+        {% endfor %}
+
+        </script>
+        {% endfor %}
+      
+      </div>
+  </main>
+  
+
+  {% endblock content %}

@@ -1,0 +1,42 @@
+{% extends 'home_base.html' %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel="stylesheet" href="{% static 'create_post/style.css' %}">
+
+
+<div class="col-md-8 offset-md-2">
+<br>
+<form method="POST" enctype="multipart/form-data">{% csrf_token %}
+  {{ post_form.body }} <br>
+  {{ post_form.body.errors }}
+  
+  <div class="input-group mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text">Upload</span>
+    </div>
+    <div class="custom-file">
+      <input type="file" class="custom-file-input" name="image" id="inputGroupFile01" accept="image/*">
+      <label class="custom-file-label" id="inputGroupFile01label" for="inputGroupFile01">Choose a Picture</label>
+    </div>
+  </div>
+  {{ post_form.image.errors }}
+
+  <input type="text" name="created_on" id="created_on">
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<script src="{% static 'js/upload_image.js' %}"></script>
+<script>
+    function websiteTimezonetoEgypt(offset){
+      var b=new Date()
+      var utc=b.getTime()+(b.getTimezoneOffset()*60000);
+      var time=new Date(utc+(3600000*offset));
+      return time.toLocaleString();
+	}
+  var now = websiteTimezonetoEgypt('+2');
+
+    // Printing the current date in the input
+    document.getElementById("created_on").value = now;
+</script>
+{% endblock %}

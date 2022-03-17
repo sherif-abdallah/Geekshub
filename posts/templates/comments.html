@@ -1,0 +1,144 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'comments.css' %}">
+<style>
+  #delete-comment-button {
+    background-color: Transparent;
+    border: none;
+    cursor:pointer;
+    font-size: large;
+    outline: none;
+}
+</style>
+
+<main>
+
+    <div class="col-9" id="comment">
+        {% for  comment in all_post_comments %}
+
+
+        <div class="card" >
+          <div class="top">
+            <a href="{% url 'accounts:profile' comment.commenter.id %}">
+            <div class="userDetails">
+              <div class="profilepic">
+                <div class="profile_img">
+                  <div class="image">
+                    {% for picture in commenter_profile_picture  %}
+                    {% if picture.author == comment.commenter %}
+                    <img src="{{  picture.image.url}}" alt="">
+                    {% endif %} 
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+       
+
+              <h3>{{ comment.commenter }}</h3>
+            </div>
+          </a>
+          {% if request.user.id == comment.commenter_id %}
+          <div>
+            <form method="POST" id="comment-delete-form-{{ comment.id }}">
+              {% csrf_token %}
+              <input type="text" style="display: none;"  name="comment_delete_id-{{ comment.id }}"  id="comment_delete_id-{{ comment.id }}" value="{{ comment.id }}">
+              <button id="delete-comment-button">
+              <a style="color: red;" ><span class="dot"><i class="fa-solid fa-trash" title=" Delete the Comment"></i></span></a>
+              </button>
+            </form>
+        </div>
+        {% endif %}
+          </div>
+
+        <div class="bottom">
+            
+            <p class="message">
+                <b>{{ comment.comment_body }}</b>
+            </p>
+            
+            <h5 class="postTime" id="timer-{{ comment.id }}" style="padding: 0.1em;"></h5>
+
+
+        </div>
+        </div>
+        <script type="text/javascript">
+          // Delete Comment
+          
+          $(document).on("submit", "#comment-delete-form-{{ comment.id }}", function (e) {
+            e.preventDefault();
+            $.ajax({
+              type: "POST",
+              url: location.href,
+              data: {
+                comment_delete_valid:"True",
+        
+                comment_delete_id:$("#comment_delete_id-{{ comment.id }}").val(),
+
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                
+              },
+              success: function () {
+                document.location.reload();
+              }
+        
+            });
+        });
+          </script>
+
+    <script>
+        
+    function doTime(then) {
+      // Convert Timezone to egypt
+      function websiteTimezonetoEgypt(offset){
+        var b=new Date()
+        var utc=b.getTime()+(b.getTimezoneOffset()*60000);
+        var time=new Date(utc+(3600000*offset));
+        return time.toLocaleString();
+    
+      }
+
+      now = new Date(websiteTimezonetoEgypt('+2'));
+      then = new Date(then);
+      difference = (now - then);
+
+    
+      years = Math.floor(difference / (60 * 60 * 1000 * 24 * 365) * 1);  
+      days = Math.floor(difference / (60 * 60 * 1000 * 24) * 1);
+      hours = Math.floor((difference % (60 * 60 * 1000 * 24)) / (60 * 60 * 1000) * 1);
+      mins = Math.floor(((difference % (60 * 60 * 1000 * 24)) % (60 * 60 * 1000)) / (60 * 1000) * 1);
+
+      if (years != 0) {
+        document.getElementById('timer-{{ comment.id }}').innerHTML = years + ' Years ago';
+      }
+      if (years == 0 && days != 0) {
+        document.getElementById('timer-{{ comment.id }}').innerHTML = days + ' Days ago';
+        
+      }
+      if (years == 0 && days == 0 && hours != 0) {
+        document.getElementById('timer-{{ comment.id }}').innerHTML = hours + ' Hours ago';
+        
+      }
+      if (years == 0 && days == 0 && hours == 0 && mins != 0) {
+        document.getElementById('timer-{{ comment.id }}').innerHTML = mins + ' Minutes ago';
+        
+      }
+      if (years == 0 && days == 0 && hours == 0 && mins == 0) {
+        document.getElementById('timer-{{ comment.id }}').innerHTML = "Justnow";
+        
+      }
+    
+      
+    
+    }
+
+    doTime('{{ comment.creared_on }}');
+
+    </script>
+        {% endfor %}
+
+
+        </div>
+    
+
+    
+</main>
+

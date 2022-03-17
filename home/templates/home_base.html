@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" translate="no">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="google" content="notranslate">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="{% static 'home/style.css' %}">
+  <link rel="stylesheet" href="{% static 'alert.css' %}">
+  <link rel="icon" href="{% static '/logo/logo.ico' %}">
+  
+  <title>Geekshub</title>
+  <style>
+      #logo1{
+        display: inline!important;
+      }
+      #logo2{
+        display: none!important;
+      }
+    @media screen and (max-width: 600px) {
+      #logo1{
+        display: none!important;
+      }
+      #logo2{
+        display: inline!important;
+      }
+    }
+    .icon-button__badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 19px;
+  height: 19px;
+  background: red;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-size: 15.5px;
+  font-family:Arial, Helvetica, sans-serif;
+  margin-top: 3px!important;
+}
+  </style>
+  {% if bell == False %}
+  <style>
+    .icon-button__badge{
+      display: none;
+    }
+  </style>
+  {% endif %}
+  {% if notification_bar_len > 99 %}
+  <style>
+  .icon-button__badge{
+      font-size: 12px;
+      padding: 11px;
+    }
+    
+  </style>
+  {% endif %}
+
+</head>
+
+<body>
+
+
+  <header >
+    <nav class="navbar" >
+      <div class="container">
+            <div class="logo" id="logo1"><a href="{% url 'home:homepage' %}"><img   src="{% static 'logo/logo1.png' %}" width="140" alt=""></a></div>
+            <div class="logo" id="logo2"><a href="{% url 'home:homepage' %}"><h3 style="color: #4d4d4f;">Geekshub</h3></a></div>
+
+            <form method="GET" action="{% url 'home:search' %}">
+        <div class="searchbar">
+          <input type="text" name="q" autocomplete="off" placeholder="Search">
+        </div>
+        </form>
+        <div class="nav-links">
+          <ul class="nav-group">
+            <li class="nav-item"><a href="{% url 'home:homepage' %}"><i class="fas fa-home"></i></a></li>
+            <li class="nav-item"><a href="{% url 'posts:create' %}"><i class="fa fa-plus"></i></a></li>
+            <li style="position: relative;" class="nav-item"><a href="{% url 'notifications:inbox' %}" ><i class="fas fa-bell" ></i>
+              {% if notification_bar_len > 99 %}
+              <span class="icon-button__badge">99</span>
+              {% else %}
+              <span class="icon-button__badge">{{ notification_bar_len }}</span>
+              {% endif %}</a></li>
+            <a href="{% url 'accounts:profile' request.user.id %}">
+            <li class="nav-item">
+              <div class="action">
+                <div class="profile">
+                  <img src="{{ profile_image }}" alt="user Avatar">
+                </div>
+              </div>
+            </li>
+            </a>
+            
+            <li  class="nav-item"><a href="{% url 'accounts:logoutuser' %}"><i class="fas fa-sign-out-alt"></i></a></li>
+
+          </ul>
+        </div>
+
+      </div>
+    </nav>
+  </header>
+  <br><br><br>
+  <br>
+  {{ profile_image.image.url }}
+  
+
+
+  
+
+
+  {% block content %}
+  {% endblock content %}
+  
+</body>
+</html>

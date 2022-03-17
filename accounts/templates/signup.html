@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://kit.fontawesome.com/fc1e235b2e.js"></script>
+  <link rel="stylesheet" href="{% static 'login/style.css' %}">
+  <link rel="icon" href="{% static '/logo/logo.ico' %}">
+
+  <title>Geekshub - Login</title>
+  <style>
+    .phone-app-demo {
+        height: 61.8rem;
+        background: url("{% static 'login/mobile-app.png' %}") center no-repeat;
+        flex: 1;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="wrapper">
+    <div class="container">
+      <div class="phone-app-demo"></div>
+      <div class="form-data">
+        <form method="POST">
+            {% csrf_token %}
+          <div class="logo">
+            
+            <img src="{% static 'logo/logo1.png' %}" alt="logo">
+          </div>
+          <input type="text" placeholder="Username" autocomplete="off" name="username">
+          <input type="password" placeholder="Password" autocomplete="off" name="password1">
+          <input type="password" placeholder="Confirm Password" autocomplete="off" name="password2">
+          {{form.non_field_errors}}
+          <button class="form-btn" type="submit">Create New Account</button>
+          <a href="{% url 'accounts:loginuser' %}" class="form-btn" style="font-family: 'Courier New', Courier, monospace; padding: 7px; margin-top: -6.5px; background-color: #42B72A;" >Login</a>
+
+          
+        </form>
+        <br><br>
+        <div class="get-the-app">
+          <div class="badges">
+            <img src="{% static 'login/app-store.png' %}" alt="app-store badge">
+            <img src="{% static 'login/google-play.png' %}" alt="google-play badge">
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+</body>
+</html>

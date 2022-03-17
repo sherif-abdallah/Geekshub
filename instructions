@@ -1,0 +1,63 @@
+
+>>> python manage.py collectstatic
+
+
+>>> pip freeze > requirements.txt
+
+
+>>> touch Procfile
+    -> web gunicorn {App_Name}.wsgi:application --log-file -
+
+
+>>> touch runtime.txt
+    -> python-3.8.10
+
+
+>>> heroku login
+
+
+>>> heroku create {app_name}
+
+
+>>> heroku addons:create heroku-postgresql:hobby-dev
+
+
+>>> heroku pg:info
+
+
+>>> heroku pg:psql
+
+
+>>> heroku config:set DISABLE_COLLECTSTATIC=1
+
+
+>>> git init
+
+
+>>> git add .
+
+
+>>> git commit -m "First Commit"
+
+
+>>> heroku git:remote -a {app_name}
+
+
+>>> git remote -v
+
+
+>>> git push heroku master
+
+
+>>> heroku run python manage.py makemigrations
+
+
+>>> heroku run python manage.py migrate
+
+
+>>> heroku run python manage.py create_super_user
+
+
+>>> heroku run python manage.py create_guest_user
+
+>> heroku pg:psql -a {app_name}
