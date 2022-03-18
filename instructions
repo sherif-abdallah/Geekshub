@@ -60,4 +60,6 @@
 
 >>> heroku run python manage.py create_guest_user
 
->> heroku pg:psql -a {app_name}
+>> heroku pg:psql -a geeks-hub
+
+>> \dt;

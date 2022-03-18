@@ -32,12 +32,12 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-PRODUCTION = True
+PRODUCTION = False
 
 
 
 ALLOWED_HOSTS = [
-    os.environ.get('HOST'),
+    os.environ.get('HOST'),  '127.0.0.1'
 ]
 
 
