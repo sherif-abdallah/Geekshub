@@ -3,7 +3,63 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'create_post/style.css' %}">
 <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="  crossorigin="anonymous"></script>
+{% if theme == "Light Mode" %}
+  <style>
+    body, .navbar {
+      background-color: #ffffff!important;
+    }
+  </style>
+{% endif %}
+{% if theme == "Dark Mode" %}
+  <style>
+    body, .navbar {
+      background-color: #18191A!important;
+      color: #e4e6eb!important;
+    }
 
+    .top h3{
+      color: #e4e6eb!important;
+    }
+    .nav-item i, .dot .fa-pen-to-square{
+      color: #e4e6eb!important;
+    }
+    #post, #no-posts{
+      background-color: #242526!important;
+    }
+    .searchbar input{
+      background-color: #242526!important;
+      color: white;
+    }
+
+    .likes{
+      color: #B0B3B8!important;
+    }
+    .likes, .comments{
+      color: #B0B3B8!important;
+    }
+    .message b{
+      color:#E4E6EB!important;
+    }
+    .actionBtns svg{
+      fill: #E4E6EB!important;
+    }
+    .logo h3 {
+      color: #E4E6EB!important;
+    }
+    .edit-profile{
+      background-color: #242526;
+      color: white;
+      border-color: white;
+    }
+    .no-posts{
+      color: #E4E6EB!important;
+    }
+    #follow{
+      color: #B0B3B8!important;
+    }
+
+  </style>
+{% endif %}
 
 <main>
 
@@ -27,19 +83,20 @@
           {% include 'follow.html' %}
           {% else %}
           <br>
-          <div class="no-posts" style="color: #676c73;">
+          <div class="no-posts" style="color: #676c73;" id="follow">
             <span style="display: inline;">{{ max_cheek_followers }}</span><span> Follower</span> • <span style="display: inline;">{{ max_cheek_following }}</span> <span>Following</span>
           </div>
           {% endif %}
           <br>
 
-          <h1 class="no-posts">{{ cheek_if_no_post }}</h1>
+          <h1 class="no-posts" style="font-size: large;">{{ cheek_if_no_post }}</h1>
+
 
         </center>
 
         {% for post in obj_user_posts %}
 
-        <div class="card">
+        <div class="card" id="post">
           <div class="top">
             <a href="{% url 'accounts:profile' post.author.id %}">
             <div class="userDetails">
@@ -99,12 +156,7 @@
                 </svg>
               </div>
               <div class="right">
-                <!-- <svg aria-label="Save" class="_8-yf5 " color="#262626" fill="#262626" height="24" role="img"
-                  viewBox="0 0 48 48" width="24">
-                  <path
-                    d="M43.5 48c-.4 0-.8-.2-1.1-.4L24 29 5.6 47.6c-.4.4-1.1.6-1.6.3-.6-.2-1-.8-1-1.4v-45C3 .7 3.7 0 4.5 0h39c.8 0 1.5.7 1.5 1.5v45c0 .6-.4 1.2-.9 1.4-.2.1-.4.1-.6.1zM24 26c.8 0 1.6.3 2.2.9l15.8 16V3H6v39.9l15.8-16c.6-.6 1.4-.9 2.2-.9z">
-                  </path>
-                </svg> -->
+
               </div>
             </div>
             <a>
@@ -122,14 +174,9 @@
               <h4 class="comments" id="viewcomments_{{ post.id }}">View all 33 comments</h4>
             </a>
             <a >
-              <h5 class="postTime">{{ post.created_on }}</h5>
+              <h5 class="postTime" id="postTime-{{ post.id }}">{{ post.created_on }}</h5>
             </a>
-            <!-- <div class="addComments"> -->
-              <!-- <div class="reaction">
-                <h3><i class="far fa-smile"></i></h3>
-              </div>
-              <input type="text" class="text" placeholder="Add a comeent...">
-              <a href="#">Post</a> -->
+
 
               <div id=""></div>
 
@@ -142,7 +189,7 @@
               document.getElementById("max_length_{{ post.id }}").innerHTML = max_length_{{ post.id }}.length;
               </script>
 
-            <!-- </div> --> <br>
+            <br>
           </div>
           </a>
         </div>
@@ -212,22 +259,70 @@ cheek_user_{{ post.id }} = null
     } else {
       // Dislike
       cheek_user_{{ post.id }} = "0";
+      {% if theme == "Dark Mode" %}
+      document.getElementById("heart-{{ post.id }}").style = "fill: #E4E6EB!important;";
+      {% else %}
       document.getElementById("heart-{{ post.id }}").style = "fill: #262626!important;";
+      {% endif %}
       max_likes.innerHTML = max_likes.innerHTML - 1;
     }
   }
 </script>
 <script>
     if (cheek_user_{{ post.id }} == "0") {
+      {% if theme == "Dark Mode" %}
+      document.getElementById("heart-{{ post.id }}").style = "fill: #E4E6EB!important;";
+      {% else %}
       document.getElementById("heart-{{ post.id }}").style = "fill: #262626!important;";
-
+      {% endif %}
     } else {
       // Dislike
       document.getElementById("heart-{{ post.id }}").style = "fill: red!important;";
 
     }
 </script>
-        
+
+
+<script>
+
+    function doTime(then) {
+      // Convert Timezone to egypt
+      function websiteTimezonetoEgypt(offset){
+        var b=new Date()
+        var utc=b.getTime()+(b.getTimezoneOffset()*60000);
+        var time=new Date(utc+(3600000*offset));
+        return time.toLocaleString();
+      }
+
+      now = new Date(websiteTimezonetoEgypt('+2'));
+      then = new Date(then);
+      difference = (now - then);
+
+      years = Math.floor(difference / (60 * 60 * 1000 * 24 * 365) * 1);  
+      days = Math.floor(difference / (60 * 60 * 1000 * 24) * 1);
+      hours = Math.floor((difference % (60 * 60 * 1000 * 24)) / (60 * 60 * 1000) * 1);
+      mins = Math.floor(((difference % (60 * 60 * 1000 * 24)) % (60 * 60 * 1000)) / (60 * 1000) * 1);
+
+      if (years != 0) {
+        document.getElementById('postTime-{{ post.id }}').innerHTML = years + ' Years ago';
+      }
+      if (years == 0 && days != 0) {
+        document.getElementById('postTime-{{ post.id }}').innerHTML = days + ' Days ago';
+      }
+      if (years == 0 && days == 0 && hours != 0) {
+        document.getElementById('postTime-{{ post.id }}').innerHTML = hours + ' Hours ago';
+      }
+      if (years == 0 && days == 0 && hours == 0 && mins != 0) {
+        document.getElementById('postTime-{{ post.id }}').innerHTML = mins + ' Minutes ago';
+      }
+      if (years == 0 && days == 0 && hours == 0 && mins == 0) {
+        document.getElementById('postTime-{{ post.id }}').innerHTML = "Justnow"; 
+      }
+    }
+
+    doTime('{{ post.created_on }}');
+
+</script>
 
 {% endfor %}
 
@@ -237,7 +332,7 @@ cheek_user_{{ post.id }} = null
         {% for suggestion in suggestions_id %}
         {% for suggestion_data in suggestions_data %}
         {% if suggestion_data.id == suggestion %}      
-        <div class="card" style="margin: 0.1px;">
+        <div class="card"  style="margin: 0.1px;">
           <div class="top">
             <div class="userDetails">
               <div class="profilepic">
@@ -258,9 +353,7 @@ cheek_user_{{ post.id }} = null
               <h3>{{ suggestion_data.username }}<br><span>Popular</span></h3>
               </a>
             </div>
-            <!-- <div>
-              <a class="follow">Follow</a>
-            </div> -->
+
           </div>
         </div>
         {% endif %}

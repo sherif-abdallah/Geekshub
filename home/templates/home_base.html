@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" translate="no">
+<html lang="en" class="notranslate" translate="no">
 
 <head>
   <meta charset="UTF-8" />
@@ -8,19 +8,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google" content="notranslate">
 
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="{% static 'home/style.css' %}">
   <link rel="stylesheet" href="{% static 'alert.css' %}">
   <link rel="icon" href="{% static '/logo/logo.ico' %}">
-  
+
   <title>Geekshub</title>
   <style>
       #logo1{
         display: inline!important;
       }
-      #logo2{
-        display: none!important;
+      #search{
+        display: none;
       }
+
+
     @media screen and (max-width: 600px) {
       #logo1{
         display: none!important;
@@ -28,23 +31,50 @@
       #logo2{
         display: inline!important;
       }
+      #home{
+        display: none;
+      }
+      #search{
+        display: block;
+      }
+
     }
     .icon-button__badge {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  width: 19px;
-  height: 19px;
-  background: red;
-  color: #ffffff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  font-size: 15.5px;
-  font-family:Arial, Helvetica, sans-serif;
-  margin-top: 3px!important;
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 19px;
+      height: 19px;
+      background: red;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      font-size: 15.5px;
+      font-family:Arial, Helvetica, sans-serif;
+      margin-top: 3px!important;
 }
+    .navbar{
+      height: 56px!important;
+    }
+    .navbar h3{
+      font-size: 18.72px!important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    .navbar a{
+      text-decoration:  none!important;
+    }
+    .navbar .searchbar input{
+      width: 189px;
+      height: 27px;
+    }
+    .navbar .searchbar input::placeholder{
+      font-weight: lighter!important;
+      color: rgb(172, 172, 172)!important;
+      font-size: 14.3px;
+    }
+
   </style>
   {% if bell == False %}
   <style>
@@ -58,8 +88,14 @@
   .icon-button__badge{
       font-size: 12px;
       padding: 11px;
+  }
+  </style>
+  {% endif %}
+  {% if theme == "Dark Mode" %}
+  <style>
+  .col-3 h4{
+        color: #e4e6eb!important;
     }
-    
   </style>
   {% endif %}
 
@@ -71,7 +107,7 @@
   <header >
     <nav class="navbar" >
       <div class="container">
-            <div class="logo" id="logo1"><a href="{% url 'home:homepage' %}"><img   src="{% static 'logo/logo1.png' %}" width="140" alt=""></a></div>
+
             <div class="logo" id="logo2"><a href="{% url 'home:homepage' %}"><h3 style="color: #4d4d4f;">Geekshub</h3></a></div>
 
             <form method="GET" action="{% url 'home:search' %}">
@@ -81,8 +117,11 @@
         </form>
         <div class="nav-links">
           <ul class="nav-group">
-            <li class="nav-item"><a href="{% url 'home:homepage' %}"><i class="fas fa-home"></i></a></li>
+            <li class="nav-item" id="home"><a href="{% url 'home:homepage' %}"><i class="fas fa-home"></i></a></li>
+
             <li class="nav-item"><a href="{% url 'posts:create' %}"><i class="fa fa-plus"></i></a></li>
+            <li class="nav-item" id="search"><a href="{% url 'home:search' %}?q="><i class="fas fa-search"></i></a></li>
+
             <li style="position: relative;" class="nav-item"><a href="{% url 'notifications:inbox' %}" ><i class="fas fa-bell" ></i>
               {% if notification_bar_len > 99 %}
               <span class="icon-button__badge">99</span>
@@ -98,7 +137,7 @@
               </div>
             </li>
             </a>
-            
+
             <li  class="nav-item"><a href="{% url 'accounts:logoutuser' %}"><i class="fas fa-sign-out-alt"></i></a></li>
 
           </ul>
@@ -110,14 +149,14 @@
   <br><br><br>
   <br>
   {{ profile_image.image.url }}
-  
 
 
-  
+
+
 
 
   {% block content %}
   {% endblock content %}
-  
+
 </body>
 </html>

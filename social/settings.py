@@ -32,16 +32,14 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
 PRODUCTION = False
 
 
 
-ALLOWED_HOSTS = [
-    os.environ.get('HOST'),  '127.0.0.1'
-]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
-#ADMINS = [(os.environ.get('SUPER_USER_NAME'), os.environ.get('SUPER_USER_USERNAME'))]
 
 
 
@@ -60,8 +58,23 @@ INSTALLED_APPS = [
     'posts.apps.PostsConfig',
     'home.apps.HomeConfig',
     'notifications.apps.NotificationsConfig',
-    'cloudinary',
+
+    # Social allauth
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
+
 ]
+
+if PRODUCTION == True:
+    INSTALLED_APPS += ['cloudinary']
+
+
+SITE_ID = 1
+
 
 
 
@@ -73,6 +86,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # Simplified static file serving.
+    # https://warehouse.python.org/project/whitenoise/
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
 ]
 
 
@@ -89,12 +107,27 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                # `allauth` needs this from django
+                'django.template.context_processors.request',
             ],
         },
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+    
+]
+
+
 WSGI_APPLICATION = 'social.wsgi.application'
+
 
 
 # Database
@@ -102,8 +135,15 @@ WSGI_APPLICATION = 'social.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config() if PRODUCTION else {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',  
+        'NAME': 'geekshub',  
+        'USER': 'root',  
+        'PASSWORD': '',  
+        'HOST': 'localhost',  
+        'PORT': '',  
+        'OPTIONS': {  
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"  
+        }  
     }
 }
 
@@ -147,7 +187,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'social/static')
 ]
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 
 
@@ -156,22 +197,19 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 
 
-
 # Path where media is stored
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
+if PRODUCTION == True:
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': os.environ.get('CLOUDINARY_STORAGE_CLOUD_NAME'),
+        'API_KEY': os.environ.get('CLOUDINARY_STORAGE_API_KEY'), 
+        'API_SECRET': os.environ.get('CLOUDINARY_STORAGE_API_SECRET'),
+    }
+    CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_STORAGE_CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_STORAGE_API_KEY'), 
-    'API_SECRET': os.environ.get('CLOUDINARY_STORAGE_API_SECRET'),
-}
-CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
-
-
-
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -180,7 +218,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'
 
+SOCIALACCOUNT_LOGIN_ON_GET=True
 
+
+# SMTP Configration
+EMAIL_BACKEND = os.environ['EMAIL_BACKEND']
+EMAIL_HOST = os.environ['EMAIL_HOST']
+EMAIL_PORT = os.environ['EMAIL_PORT']
+EMAIL_USE_TLS = os.environ['EMAIL_USE_TLS']
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 
 
 django_heroku.settings(locals()) if PRODUCTION else None

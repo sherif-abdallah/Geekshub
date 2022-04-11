@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 
+
 class Edit_Profile_Form(forms.Form):
     username = forms.CharField(required=False)
     image = forms.ImageField(required=False)

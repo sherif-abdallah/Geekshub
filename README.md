@@ -15,7 +15,7 @@ python3 -m venv venv
 ```
 #### Activate the Virtual enviroumunt For Linux or MacOs
 ```bash
-source venv/bin/activate
+source venv/bin/activate.bat
 ```
 #### Activate the Virtual enviroumunt For Windows
 ```bash
@@ -34,13 +34,19 @@ python3 get-pip.py
 ```bash
 pip install -r requirements.txt
 ```
-
+#### Migrate the Database on Windows
+```bash
+py manage.py migrate --run-syncdb
+```
+#### Migrate the Database on Linux or Macos
+```bash
+python3 manage.py migrate --run-syncdb
+```
 #### Run The Platform Sever on Windows
 ```bash
 py manage.py runserver
 ```
-###### Change The Cloudinary Api Secret Key and Cloud Name and Api Key or Remoe Them All in settings.py file
-###### Change The SECRET_KEY Variable in settings.py file
+###### Change The All Secret Variables  in .env file
 
 
 #### Run The Platform Sever on Linux or Macos

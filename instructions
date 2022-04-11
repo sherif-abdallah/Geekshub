@@ -60,6 +60,8 @@
 
 >>> heroku run python manage.py create_guest_user
 
+>> heroku git:remote -a geeks--hub
+
 >> heroku pg:psql -a geeks-hub
 
 >> \dt;

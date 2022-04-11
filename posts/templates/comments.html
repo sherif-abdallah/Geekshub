@@ -8,15 +8,16 @@
     font-size: large;
     outline: none;
 }
+
 </style>
-
+<br id="break">
+<br id="break">
 <main>
-
     <div class="col-9" id="comment">
         {% for  comment in all_post_comments %}
 
 
-        <div class="card" >
+        <div class="card" id="comment_obj">
           <div class="top">
             <a href="{% url 'accounts:profile' comment.commenter.id %}">
             <div class="userDetails">
@@ -93,14 +94,12 @@
         var utc=b.getTime()+(b.getTimezoneOffset()*60000);
         var time=new Date(utc+(3600000*offset));
         return time.toLocaleString();
-    
       }
 
       now = new Date(websiteTimezonetoEgypt('+2'));
       then = new Date(then);
       difference = (now - then);
 
-    
       years = Math.floor(difference / (60 * 60 * 1000 * 24 * 365) * 1);  
       days = Math.floor(difference / (60 * 60 * 1000 * 24) * 1);
       hours = Math.floor((difference % (60 * 60 * 1000 * 24)) / (60 * 60 * 1000) * 1);
@@ -111,29 +110,24 @@
       }
       if (years == 0 && days != 0) {
         document.getElementById('timer-{{ comment.id }}').innerHTML = days + ' Days ago';
-        
       }
       if (years == 0 && days == 0 && hours != 0) {
         document.getElementById('timer-{{ comment.id }}').innerHTML = hours + ' Hours ago';
-        
       }
       if (years == 0 && days == 0 && hours == 0 && mins != 0) {
         document.getElementById('timer-{{ comment.id }}').innerHTML = mins + ' Minutes ago';
-        
       }
       if (years == 0 && days == 0 && hours == 0 && mins == 0) {
-        document.getElementById('timer-{{ comment.id }}').innerHTML = "Justnow";
-        
+        document.getElementById('timer-{{ comment.id }}').innerHTML = "Justnow"; 
       }
-    
-      
-    
     }
 
     doTime('{{ comment.creared_on }}');
 
     </script>
-        {% endfor %}
+<br id="break">
+<br id="break">
+    {% endfor %}
 
 
         </div>

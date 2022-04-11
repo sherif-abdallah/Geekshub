@@ -25,18 +25,76 @@
     #notify-card{
       margin-left: -4em;
     }
+    .no-posts{
+      font-family: 'Inder', sans-serif;
+      line-height: 28px;
+      margin-bottom: 0px;
+      color: #666;
+    }
+
 
   </style>
-  <main>
+{% if theme == "Light Mode" %}
+<style>
+  body, .navbar {
+    background-color: #ffffff!important;
+  }
+</style>
+{% endif %}
+{% if theme == "Dark Mode" %}
+<style>
+  body, .navbar {
+    background-color: #18191A!important;
+    color: #e4e6eb!important;
+  }
+
+  .top h3{
+    color: #e4e6eb!important;
+  }
+  .nav-item i, .dot .fa-pen-to-square{
+    color: #e4e6eb!important;
+  }
+  #notify-card, #no-posts{
+    background-color: #242526!important;
+  }
+  .searchbar input{
+    background-color: #242526!important;
+    color: white;
+  }
+
+  .likes{
+    color: #B0B3B8!important;
+  }
+  .likes, .comments{
+    color: #B0B3B8!important;
+  }
+  .message b{
+    color:#E4E6EB!important;
+  }
+  .actionBtns svg{
+    fill: #E4E6EB!important;
+  }
+  .logo h3 {
+    color: #E4E6EB!important;
+  }
+  .no-posts{
+    color: #E4E6EB!important;  
+  }
+</style>
+{% endif %}
+
+<main>
     <div class="container">
       <div class="col-9">
-
-
-
+          {%  if cheek_notification == 0 %}
+          <center>
+          <h1 class="no-posts" style="font-size: large;">No more notification</h1>
+          </center>
+          {%  endif %}
             {% for notification in notifications %}
 
             {% if notification.notification_type == 3 %}
-            <div id="notify-card" class="card" >
+            <div id="notify-card" class="card"  >
               <div class="top">
                 <a href="{% url 'accounts:profile' notification.sender.id %}">
                 <div class="userDetails">
@@ -181,5 +239,7 @@
       </div>
   </main>
   
+<script>
 
-  {% endblock content %}
+</script>
+{% endblock content %}

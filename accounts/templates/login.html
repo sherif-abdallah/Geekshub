@@ -1,4 +1,5 @@
 {% load static %}
+{% load socialaccount %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,7 +10,7 @@
   <script src="https://kit.fontawesome.com/fc1e235b2e.js"></script>
   <link rel="stylesheet" href="{% static 'login/style.css' %}">
   <link rel="icon" href="{% static '/logo/logo.ico' %}">
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <title>Geekshub - Login</title>
   <style>
     .phone-app-demo {
@@ -17,7 +18,12 @@
         background: url("{% static 'login/mobile-app.png' %}") center no-repeat;
         flex: 1;
     }
+    #forget-password:hover{
+      text-decoration: underline!important;
+    }
+
   </style>
+
 </head>
 
 <body>
@@ -29,14 +35,27 @@
         <form method="POST">
             {% csrf_token %}
           <div class="logo">
-            
+
             <img src="{% static 'logo/logo1.png' %}" alt="logo">
           </div>
           <input type="text" placeholder="Username" autocomplete="off" name="username">
           <input type="password" placeholder="Password" autocomplete="off" name="password">
           {{form.non_field_errors}}
           <button class="form-btn" type="submit">Log in</button>
-          <a href="{% url 'accounts:signup' %}" class="form-btn" style="font-family: 'Courier New', Courier, monospace; padding: 7px; margin-top: -6.5px; background-color: #42B72A;" >Create Account</a>
+          <span class="has-separator">Or</span>
+          <a href="{% provider_login_url 'google' %}" class="form-btn" id="social" style="font-family: 'Courier New', Courier, monospace; padding: 7px; margin-top: -6.5px; background-color: #dd4b39; font-size: 13px;" >
+            <i class="fa fa-google fa-fw"></i>  
+          Google Login
+          </a>
+          <a href="{% provider_login_url 'facebook' %}" class="form-btn" id="social" style="font-family: 'Courier New', Courier, monospace; padding: 7px; margin-top: -6.5px; background-color: #3B5998; font-size: 13px;" >
+            <i class="fa fa-facebook fa-fw"></i>  
+          Facebook Login
+          </a>
+          <a class="password-reset" href="{% url 'password_reset' %}">Forgot password?</a>
+        </form>
+        <div class="sign-up">
+          Don't have an account? <a href="{% url 'accounts:signup' %}">Sign up</a>
+        </div>
 
           
         </form>

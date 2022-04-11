@@ -4,22 +4,22 @@ from accounts.models import *
 from posts.models import *
 from posts.forms import *
 from notifications.models import *
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-import random
+from django.db.models import Q
 
+from accounts.views import cheek_user_picture
 
 # Create your views here.
+def Reverse(lst):
+    return [ele for ele in reversed(lst)]
+
 
 @login_required(login_url='accounts:loginuser')
 def Home_Page_views(request):
     
+    cheek_user_picture(request)
     obj_user_posts = Post.objects.order_by('?')
-    def Reverse(lst):
-        return [ele for ele in reversed(lst)]
 
     obj_user_posts = Reverse(obj_user_posts)
-
-
 
 
     comments_lenth = Post_Comments.objects.all()
@@ -28,7 +28,6 @@ def Home_Page_views(request):
 
 
     if request.method == "POST":
-        print(request.POST.get('post_author'))
         form = LikeForm_Profile(request.POST)
 
         if request.POST.get('post_id') != None:
@@ -68,6 +67,7 @@ def Home_Page_views(request):
     suggestions_data = User.objects.all()
     suggestions_image = Profile_picture.objects.all()
 
+
     #notification_bar
     notification_bar = Notifications.objects.filter(user=request.user.id, is_seen=False)
     notification_bar_len = len(notification_bar)
@@ -94,6 +94,7 @@ def Home_Page_views(request):
 
         "notification_bar_len":notification_bar_len,
         "bell":bell,
+        "theme":Profile_picture.objects.get(author_id=request.user.id).theme,
 
     }
 
@@ -101,12 +102,14 @@ def Home_Page_views(request):
     return render(request, 'home.html', context)
 
 
-
-
+@login_required(login_url='accounts:loginuser')
 def Search_Page_views(request):
     if request.method == "GET":
         q = request.GET.get('q')
-        search_results = User.objects.filter(username__contains=q)
+        search_results = User.objects.filter(username__icontains=q)
+
+
+
         accounts_profile_image = Profile_picture.objects.all()
 
     # Suggestions For You
@@ -114,6 +117,8 @@ def Search_Page_views(request):
     suggestions_id = [a_tuple[0] for a_tuple in suggestions]
     suggestions_data = User.objects.all()
     suggestions_image = Profile_picture.objects.all()
+
+
 
     #notification_bar
     notification_bar = Notifications.objects.filter(user=request.user.id, is_seen=False)
@@ -134,6 +139,8 @@ def Search_Page_views(request):
         "suggestions_image":suggestions_image,
         "notification_bar_len":notification_bar_len,
         "bell":bell,
+        "theme":Profile_picture.objects.get(author_id=request.user.id).theme,
+        "search_query":q,
 
     }
     return render(request, 'search.html', context)

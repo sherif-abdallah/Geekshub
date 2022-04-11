@@ -3,12 +3,16 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Count
 
+THEME_CHOICE = (
+    ('Light Mode', 'Light Mode'),
+    ('Dark Mode', 'Dark Mode'),
+)
 
 # Create your models here.
 class Profile_picture(models.Model):
     author = models.ForeignKey('auth.User', on_delete=models.CASCADE , null=False, blank=False)
     image = models.ImageField(upload_to="", default='posts/default.jpg')
-
+    theme = models.CharField(max_length=1000, choices=THEME_CHOICE, default='Light Mode')
 
     # def save(self, *args, **kwargs):
     #     super().save(*args, **kwargs)

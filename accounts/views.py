@@ -10,41 +10,76 @@ from posts.models import *
 from .models import Follow, Profile_picture
 from django.db.models import Count
 from notifications.models import *
+import re
+from allauth.socialaccount.models import SocialAccount
+import os
+
+# Create your Packages here.
+def check_email_is_valid(email):  
+    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+
+    if(re.search(regex, email)):   
+        return True
+    else:
+        return False
 
 
+# Cheek if user dosent have profile picture
+def cheek_user_picture(request):
+    profile_picture = Profile_picture.objects.filter(author_id=request.user)
 
-
-
+    if len(profile_picture) == 0:
+        Profile_picture.objects.create(author_id=request.user.id)
 
 # Create your views here.
-
-
-
 def register(request):
 
     if request.method == "POST":
         form = UserCreationForm(request.POST)
+        username_error = "" if request.POST.get('username') == None else request.POST.get('username')
+        email_error = "" if request.POST.get('email') == None else request.POST.get('email')
+
 
         if form.is_valid():
-            form.save()
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password1']
+            email = request.POST.get('email')
+            if check_email_is_valid(email) == True:
+                if User.objects.filter(email=email).exists() == False:
+                    form.save()
+                    userid = form.save().id
+                    User.objects.filter(id=userid).update(email=email)
+                    username = form.cleaned_data['username']
+                    password = form.cleaned_data['password1']
 
-            birthday = request.POST.get('birthday')
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            Profile_picture.objects.create(author_id=request.user.id)
+                    user = authenticate(username=username, password=password)
+                    login(request, user)
+                    Profile_picture.objects.create(author_id=request.user.id)
 
-            return redirect('home:homepage')
-
+                    return redirect('home:homepage')
+                else:
+                    form = UserCreationForm()
+                    message = "The email is already taken"
+            else:
+                form = UserCreationForm()
+                message = "Please write a valid email"
+        else:
+            message = ""
 
     else:
         form = UserCreationForm()
+        message = ""
+        username_error = ""
+        email_error = ""
+
+
+
 
     context = {
-        'form':form
+        'form':form,
+        'message':message,
+        "username_error":username_error,
+        "email_error":email_error,
     }
-
+    
     
     return render(request, 'signup.html', context)
 
@@ -52,6 +87,7 @@ def register(request):
 @login_required(login_url='accounts:loginuser')
 def Profile_views(request, userid):
 
+    cheek_user_picture(request)
 
     obj_user_posts = Post.objects.filter(author_id=userid)
     def Reverse(lst):
@@ -96,7 +132,7 @@ def Profile_views(request, userid):
         form = LikeForm_Profile(request.POST)
         if request.POST.get('follow_valid') == "True":
             cheek_if_follow = Follow.objects.filter(follower_id=request.user.id, following_id=userid)
-            print(cheek_if_follow)
+
             if len(cheek_if_follow) == 0:
                 Follow.objects.create(follower_id=request.user.id, following_id=userid)
                 follow_message = 'Unfollow'
@@ -165,6 +201,7 @@ def Profile_views(request, userid):
         "suggestions_image":suggestions_image,
         "notification_bar_len":notification_bar_len,
         "bell":bell,
+        "theme":Profile_picture.objects.get(author_id=request.user.id).theme
 
     }
 
@@ -173,11 +210,16 @@ def Profile_views(request, userid):
 
 @login_required(login_url='accounts:loginuser')
 def Edit_Profile_views(request):
+
+    cheek_user_picture(request)
+
     form = Edit_Profile_Form()
     if request.method == "POST":
         form = Edit_Profile_Form(request.POST, request.FILES)
-        
+
         username = request.user
+        email = request.user.email
+        
         if form.is_valid():
             image = form.cleaned_data['image']
 
@@ -186,13 +228,42 @@ def Edit_Profile_views(request):
                 obj.username = form.cleaned_data['username']
                 obj.save()
                 username = form.cleaned_data['username']
+
+            email = request.POST.get('email')
+
+            if len(request.POST.get('email')) != 0:   
+                if check_email_is_valid(email) == True:
+                    if User.objects.filter(email=email).exists() == False:
+                        email = User.objects.get(id=request.user.id)
+                        email.email = request.POST.get('email')
+                        email.save()
+                        email = request.POST.get('email')
+                        message = "Done"
+                    else:
+                        message = "The email is already taken"
+                else:
+                    message = "Please write a valid email"
+            else:
+                message = ""
+
+
             if image != None:
+                # Cheek if the last image not defult
+                if Profile_picture.objects.get(author_id=request.user.id).image.name != 'posts/default.jpg':
+                    os.remove(Profile_picture.objects.get(author_id=request.user.id).image.path)
 
                 Profile_picture.objects.filter(author_id=request.user.id).delete()
                 Profile_picture.objects.create(author_id=request.user.id, image=image)
-                
+            
+            Profile_picture.objects.filter(author_id=request.user.id).update(theme=request.POST.get('theme'))
+            cheek_theme = request.POST.get('theme')                
     else:
-        username = request.user        
+        username = request.user
+        
+        email = request.user.email
+        cheek_theme = Profile_picture.objects.get(author_id=request.user.id).theme
+        message = ""
+
 
     image = Profile_picture.objects.get(author_id=request.user.id)
 
@@ -205,6 +276,7 @@ def Edit_Profile_views(request):
         bell = True
 
 
+
     context = {
         "form":form,
         "username":username,
@@ -212,6 +284,11 @@ def Edit_Profile_views(request):
         "profile_image": Profile_picture.objects.get(author_id=request.user.id).image.url,
         "notification_bar_len":notification_bar_len,
         "bell":bell,
+        "cheek_theme":cheek_theme,
+        "theme":Profile_picture.objects.get(author_id=request.user.id).theme,
+        "email":email,
+        "message":message,
+        
     }
 
     return render(request, 'edit_profile.html', context)

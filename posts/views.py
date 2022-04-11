@@ -7,7 +7,8 @@ from accounts.models import Profile_picture
 from django.contrib.auth.models import User
 from notifications.models import *
 from accounts.models import *
-
+from accounts.views import cheek_user_picture
+import os
 
 
 
@@ -15,7 +16,8 @@ from accounts.models import *
 
 @login_required(login_url='accounts:loginuser')
 def Post_create_views(request):
-    
+    cheek_user_picture(request)
+
     post_form = PostForm()
     if request.method == 'POST':
 
@@ -39,6 +41,8 @@ def Post_create_views(request):
         "profile_image": Profile_picture.objects.get(author_id=request.user.id).image.url,
         "notification_bar_len":notification_bar_len,
         "bell":bell,
+        "theme":Profile_picture.objects.get(author_id=request.user.id).theme
+
 
     }
 
@@ -47,6 +51,7 @@ def Post_create_views(request):
 
 @login_required(login_url='accounts:loginuser')
 def Post_views(request, id):
+    cheek_user_picture(request)
     post = Post.objects.get(id=id)
     username_id = Post.objects.get(id=id).author.id
     image_user_profile_picture = Profile_picture.objects.get(author_id=username_id).image.url
@@ -119,16 +124,19 @@ def Post_views(request, id):
         "suggestions_image":suggestions_image,
         "notification_bar_len":notification_bar_len,
         "bell":bell,
+        "theme":Profile_picture.objects.get(author_id=request.user.id).theme
 
     }
     return render(request, "post.html", context)
 
 @login_required(login_url='accounts:loginuser')
 def Delete_Post_views(request, id):
+    cheek_user_picture(request)
     obj = Post.objects.get(id=id)
     if request.user.id == obj.author_id:
         obj.delete()
-        
+        os.remove(obj.image.path)
+
         message = "Your Post was deleted"
         return redirect('/')
     else:
@@ -138,6 +146,7 @@ def Delete_Post_views(request, id):
 
 @login_required(login_url='accounts:loginuser')
 def Edit_Post_views(request, id):
+    cheek_user_picture(request)
     post_detaild_before = Post.objects.get(id=id) # Post Body Before Edit
 
     if request.user.id == post_detaild_before.author_id:
@@ -148,7 +157,9 @@ def Edit_Post_views(request, id):
                 if post_form.cleaned_data['image'] != None:
                     # Edit The All Of the Post if All input is Good
                     edit_full_post = Post.objects.get(id=id)
+                    os.remove(edit_full_post.image.path)
                     edit_full_post.image = post_form.cleaned_data['image']
+                    
                     edit_full_post.body = post_form.cleaned_data['body']
                     edit_full_post.save()
                 elif post_form.cleaned_data['image'] == None:
@@ -168,10 +179,12 @@ def Edit_Post_views(request, id):
 
     context = {
         "post_form":post_form,
-        "post_detaild_before":post_detaild_before,  
+        "post_detaild_before":post_detaild_before,
         "profile_image": Profile_picture.objects.get(author_id=request.user.id).image.url, "post_id":id,
         "notification_bar_len":notification_bar_len,
         "bell":bell,
+        "theme":Profile_picture.objects.get(author_id=request.user.id).theme
+
 
         }
 
