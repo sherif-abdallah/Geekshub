@@ -105,10 +105,12 @@ def Home_Page_views(request):
 @login_required(login_url='accounts:loginuser')
 def Search_Page_views(request):
     if request.method == "GET":
+        # Search functionalty
         q = request.GET.get('q')
-        search_results = User.objects.filter(username__icontains=q)
-
-
+        if len(q) != 0:
+            search_results = User.objects.filter(username__icontains=q)
+        else:
+            search_results = User.objects.all()
 
         accounts_profile_image = Profile_picture.objects.all()
 
@@ -119,7 +121,6 @@ def Search_Page_views(request):
     suggestions_image = Profile_picture.objects.all()
 
 
-
     #notification_bar
     notification_bar = Notifications.objects.filter(user=request.user.id, is_seen=False)
     notification_bar_len = len(notification_bar)
@@ -127,7 +128,6 @@ def Search_Page_views(request):
         bell = False
     else:
         bell = True
-
 
 
     context = {
