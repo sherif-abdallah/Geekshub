@@ -113,11 +113,11 @@
             </div>
             {% endif %}
           </div>
-          <a href="{{ post.image.url }}">
+          {% comment %} <a href="{{ post.image.url }}"> {% endcomment %}
           <div class="imgBx">
             <img src="{{ post.image.url }}" alt="post-1" class="cover">
           </div>
-          </a>
+          {% comment %} </a> {% endcomment %}
           <div class="bottom">
             <div class="actionBtns">
               <div class="left">
@@ -161,12 +161,12 @@
             <a style="color: #262626; cursor: pointer;" class="max_likes">
               <span id="likes">{{max_likes}}</span><span> Likes</span>
             </a>
-            <a >
+            <a>
               <p class="message"><b>{{ post.body }}</b> 
               </p>
             </a>
 
-            <a >
+            <a>
               <h5 class="postTime" id="countup1"><span class="years"></span><span class="days"></span><span class="hours"></span><span class="minutes"></span><span class="justnow"></span></h5>
             </a>
             <form id="comment-form" method="POST">
