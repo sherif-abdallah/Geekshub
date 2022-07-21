@@ -8,6 +8,10 @@
    padding-right: 0px!important;
 
   }
+  #disable-Brak {
+    display: none;
+  }
+
   .find-friends {
   background-color: #1B74E4;
   border: none;
@@ -35,6 +39,9 @@
     #no-more{
     padding-right: 0px!important;
     padding-left: 120px!important;
+  }
+  #disable-Brak {
+    display: block;
   }
   #follow-more{
     padding-left: 30px!important;
@@ -363,7 +370,7 @@ cheek_user_{{ post.id }} = null
 {% endfor %}
 
 {% if news_feed.has_next == False %}
-
+<br id="disable-Brak"><br id="disable-Brak">
 <div class="card noposts" id="post" style="padding-bottom: 1em;">
   <div>
   <br>
