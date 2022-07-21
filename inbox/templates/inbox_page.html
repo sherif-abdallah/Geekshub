@@ -1,0 +1,181 @@
+{% extends 'home_base.html' %}
+{% block content %}
+{% load static %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{% static 'inbox/style.css' %}">
+
+
+<div class="app">
+    <div class="wrapper">
+
+        <!-- Friends section -->
+        <div class="conversation-area">
+            <div id="conversation-area-js">
+                {% for friend in last_messages %}
+                <a onclick='reloadChatArea("{{ friend.friend_id }}")' id="conversation-area-friend-Link"
+                    data-freindUserid="{{ friend.friend_id }}">
+                    {% if current_userid == friend.friend_id %}
+                    {% if friend.seen == False and friend.from_user != request.user.id %}
+                    <div class="msg active online" data-userid="{{ friend.friend_id }}">
+
+
+                        {% else %}
+                        <div class="msg active" data-userid="{{ friend.friend_id }}">
+                            {% endif %}
+                            {% else %}
+                            {% if friend.seen == False and friend.from_user != request.user.id %}
+                            <div class="msg online" data-userid="{{ friend.friend_id }}">
+                                {% else %}
+                                <div class="msg" data-userid="{{ friend.friend_id }}">
+                                    {% endif %}
+                                    {% endif %}
+
+
+                                    <img class="msg-profile" src="{{ friend.friend_profile_picture }}" alt="">
+
+                                    <div class="msg-detail">
+                                        <div class="msg-username">{{ friend.friend_name }}</div>
+                                        <div class="msg-content">
+                                            {% if friend.msg|length != 0 %}
+                                            <span class="msg-message">{{ friend.msg }}</span>
+                                            <span class="msg-date" id="msg-date" data-friendid="{{ friend.friend_id }}"
+                                                data-dateconv="{{ friend.date_utc }}"></span>
+                                            {% endif %}
+
+                                        </div>
+                                    </div>
+                                </div>
+                </a>
+
+                {% endfor %}
+            </div>
+            {% if friends_name.has_next %}
+            <a id="loadMoreFriendsButton">Load More...</a> <br>
+            {% endif %}
+        </div>
+
+
+
+        <!-- Chat Section -->
+
+        <div class="chat-area" id="chat-area">
+
+                <div class="chat-area-header" >
+                    <div class="chat-area-group" onclick="goToCurrentUserProfile()"><img class="chat-area-profile" src="{{ friend_chat_user.image.url }}" alt=""></div>
+
+                    <div class="chat-area-title" onclick="goToCurrentUserProfile()" style="display:inline-block;">{{ friend_chat_user.author.username }}</div>
+                </div>
+
+            <br>
+
+
+
+
+
+            <div class="chat-area-main">
+
+                <center>
+                    {% if msgs_paginate.has_next %}
+                    <a href="#" id="loadMoreMessagesButton" onclick="loadMoreMessagesButton()">Load More...</a>
+                    {% else %}
+                    <a href="#" id="loadMoreMessagesButton" onclick="loadMoreMessagesButton()"
+                        style="display: none;">Load More...</a>
+                    {% endif %}
+                </center>
+                <div id="Messages_List">
+                    {% for msg in msgs %}
+                    {% if msg.from_user == current_userid %}
+                    <div class="chat-msg not-owner">
+                        <div class="chat-msg-profile">
+
+                            <div class="chat-msg-date" data-dateid="{{ msg.id }}" data-date="{{ msg.date_utc }}"></div>
+                        </div>
+                        <div class="chat-msg-content">
+                            <div class="chat-msg-text">{{ msg.msg|safe }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if msg.from_user == request.user.id %}
+                    <div class="chat-msg owner">
+                        <div class="chat-msg-profile">
+                            <div class="chat-msg-date"><span data-dateid="{{ msg.id }}" data-date="{{ msg.date_utc }}"></span>
+                            <span class="chat-msg-seen" data-seen="{{ msg.seen|lower }}"></span>
+                            </div>
+                        </div>
+                        <div class="chat-msg-content">
+                            <div class="chat-msg-text" data-id="{{ msg.id }}">{{ msg.msg|safe }}
+                                <div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% endfor %}
+                </div>
+                
+
+            </div>
+            <form class="chat-area-footer" id="form_new_msg">
+                {% csrf_token %}
+                <input type="text" required="True" autocomplete="off" name="msg_input"
+                    placeholder="Type something here..." id="msg_input" />
+                <button id="sendLogo">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path
+                            d="M20.34,9.32l-14-7a3,3,0,0,0-4.08,3.9l2.4,5.37h0a1.06,1.06,0,0,1,0,.82l-2.4,5.37A3,3,0,0,0,5,22a3.14,3.14,0,0,0,1.35-.32l14-7a3,3,0,0,0,0-5.36Zm-.89,3.57-14,7a1,1,0,0,1-1.35-1.3l2.39-5.37A2,2,0,0,0,6.57,13h6.89a1,1,0,0,0,0-2H6.57a2,2,0,0,0-.08-.22L4.1,5.41a1,1,0,0,1,1.35-1.3l14,7a1,1,0,0,1,0,1.78Z" />
+                    </svg>
+                </button>
+            </form>
+
+
+        </div>
+    </div>
+</div>
+
+<div class="cookies">
+    <div id="messages_home_api">{% url 'inbox:messages_home_api' %}</div>
+    <div id="current_user">{{ current_userid }}</div>
+</div>
+
+<script>
+    // loadFriends.js Variables
+    const loadMoreFriends_URL = '{% url "inbox:friends_api" %}';
+    const conversationAreaFriend_URL = '{% url "inbox:Main_inboxpage" %}';
+    const check_there_message_from_friends_api = '{% url "inbox:check_there_message_from_friends_api" %}';
+    const message_tune = '{% static "inbox/message_tune.mp3" %}';
+    var next_page_friends = '{% if friends_name.has_next %}{{  friends_name.next_page_number  }}{% else %}null{% endif %}'.split(' ')[0];
+
+</script>
+
+<script src="{% static 'inbox/loadFriends.js' %}"></script>
+
+
+<script>
+    // loadMoreMessages.js
+    const friends_Lunch_api = '{% url "inbox:friends_Lunch_Home_api" %}';
+
+    // new_msg.js
+    var request_user_id = '{{ request.user.id }}';
+    const create_msg_api = '{% url "inbox:create_msg_api" %}';
+    const check_there_message_home_api = "{% url 'inbox:check_there_message_home_api' %}";
+
+    // seen_check.js
+    const seen_check_api = "{% url 'inbox:check_if_friend_seen_home_api' %}";
+</script>
+
+<script>
+    if ("{{ theme }}" == "Dark Mode") {
+        document.body.classList.add("dark-mode");
+    }
+</script>
+
+<script src="{% static 'inbox/loadMoreMessages.js' %}"></script>
+<script src="{% static 'inbox/new_msg.js' %}"></script>
+<script src="{% static 'inbox/seen_check.js' %}"></script>
+
+
+
+{% endblock %}
