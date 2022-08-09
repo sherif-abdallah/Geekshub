@@ -24,6 +24,7 @@ Then install the dependencies:
 
 ```sh
 (venv)$ cd Geekshub
+(venv)$ pip install --upgrade pip
 (venv)$ pip install -r requirements.txt
 ```
 Note the `(venv)` in front of the prompt. This indicates that this terminal
