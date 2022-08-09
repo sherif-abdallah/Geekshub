@@ -1,7 +1,7 @@
 # Geekshub
 
 ## Setup
-
+Python version is 3.8
 The first thing to do is to clone the repository:
 
 ```sh
