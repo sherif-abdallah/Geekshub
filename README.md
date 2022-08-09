@@ -5,7 +5,7 @@
 The first thing to do is to clone the repository:
 
 ```sh
-$ git clone https://github.com/sherif-abdallah/Geekshub
+$ git clone https://github.com/sherif-abdallah/Geekshub Geekshub
 ```
 Install Python 3.8 venv, pip and compiler
 
