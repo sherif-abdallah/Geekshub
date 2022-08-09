@@ -10,7 +10,7 @@ $ git clone https://github.com/sherif-abdallah/Geekshub Geekshub
 Install Python 3.8 venv, pip and compiler
 
 ```sh
-sudo apt-get install python3.8 python3.8-venv python3-venv
+$ sudo apt-get install python3.8 python3.8-venv python3-venv
 ```
 
 Create a virtual environment to install dependencies in and activate it:
