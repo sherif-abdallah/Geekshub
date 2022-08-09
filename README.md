@@ -7,7 +7,7 @@ The first thing to do is to clone the repository:
 ```sh
 $ git clone https://github.com/sherif-abdallah/Geekshub
 ```
-Install Python 3.8 venv and pip and compiler
+Install Python 3.8 venv, pip and compiler
 
 ```sh
 sudo apt-get install python3.8 python3.8-venv python3-venv
