@@ -196,7 +196,7 @@ class VoiceRecorder {
         var fd = new FormData();
         fd.append('fname', 'audio.mp3');
         fd.append('data', this.blob);
-        fd.append('duration', window.totalSeconds + 1);
+        fd.append('duration', window.totalSeconds);
 
         $.ajax({
             type: 'POST',
