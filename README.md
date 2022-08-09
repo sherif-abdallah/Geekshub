@@ -6,7 +6,6 @@ The first thing to do is to clone the repository:
 
 ```sh
 $ git clone https://github.com/sherif-abdallah/Geekshub
-$ cd Geekshub
 ```
 Install Python 3.8 venv and pip and compiler
 
@@ -24,6 +23,7 @@ $ source venv/bin/activate
 Then install the dependencies:
 
 ```sh
+(venv)$ cd Geekshub
 (venv)$ pip install -r requirements.txt
 ```
 Note the `(venv)` in front of the prompt. This indicates that this terminal
