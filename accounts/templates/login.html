@@ -1,0 +1,78 @@
+{% load static %}
+{% load socialaccount %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="{% static 'login/style.css' %}">
+  <link rel="icon" href="{% static '/logo/logo.ico' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
+  <title>Geekshub - Login</title>
+  <style>
+    .phone-app-demo {
+        height: 61.8rem;
+        background: url("{% static 'login/mobile-app.png' %}") center no-repeat;
+        flex: 1;
+    }
+    #forget-password:hover{
+      text-decoration: underline!important;
+    }
+
+    .login-with-google-btn{
+      background-image: url("{% static 'pictures/google_logo.svg' %}");
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div id="wrapper">
+    <div class="container">
+      <div class="phone-app-demo"></div>
+      <div class="form-data">
+        <form method="POST" autocomplete="off">
+            {% csrf_token %}
+          <div class="logo">
+
+            <img src="{% static 'logo/logo1.png' %}" alt="logo">
+          </div>
+          <input type="username" placeholder="Username"  name="username">
+          <input type="password" placeholder="Password" name="password">
+          {% comment %} {{form.non_field_errors}} {% endcomment %}
+          <button class="form-btn" type="submit">Log In</button>
+          <span class="has-separator">Or</span>
+          <a href="{% provider_login_url 'google' %}" type="button" class="login-with-google-btn" >
+            <span>Log in with Google</span>
+          </a>
+          <br>
+          <a class="password-reset" href="{% url 'password_reset' %}">Forgot password?</a>
+        </form>
+        <div class="sign-up">
+          Don't have an account? <a href="{% url 'accounts:signup' %}">Sign up</a>
+        </div>
+
+          
+        </form>
+        <br><br>
+        <div class="get-the-app">
+          <div class="badges">
+            <img src="{% static 'login/app-store.png' %}" alt="app-store badge">
+            <img src="{% static 'login/google-play.png' %}" alt="google-play badge">
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+</body>
+</html>
