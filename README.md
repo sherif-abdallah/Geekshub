@@ -24,8 +24,8 @@ Then install the dependencies:
 
 ```sh
 (venv)$ cd Geekshub
-(venv)$ python3 -m pip install --upgrade pip
-(venv)$ python3 -m pip install -r requirements.txt
+(venv)$ python -m pip install --upgrade pip
+(venv)$ python -m pip install -r requirements.txt
 ```
 Note the `(venv)` in front of the prompt. This indicates that this terminal
 session operates in a virtual environment set up by `virtualenv`.
@@ -37,15 +37,15 @@ then you will have to migrate the db
 
 
 ```sh
-(venv)$ python3 manage.py migrate --run-syncdb
+(venv)$ python manage.py migrate --run-syncdb
 ```
 Collect all the static files your are using in all the apps even the third party apps you installed by pip
 ```sh
-(venv)$ python3 manage.py collectstatic
+(venv)$ python manage.py collectstatic
 ```
 
 Finally run The Geekshub Server
 ```sh
-(venv)$ python3 manage.py runserver
+(venv)$ python manage.py runserver
 ```
 And navigate to `http://127.0.0.1:8000`.
