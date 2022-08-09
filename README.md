@@ -38,7 +38,7 @@ then you will have to migrate the db
 ```sh
 (venv)$ python3 manage.py migrate --run-syncdb
 ```
-
+Finally run The Geekshub Server
 ```sh
 (venv)$ python3 manage.py runserver
 ```
