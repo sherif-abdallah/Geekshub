@@ -38,6 +38,11 @@ then you will have to migrate the db
 ```sh
 (venv)$ python3 manage.py migrate --run-syncdb
 ```
+Collect all the static files your are using in all the apps even the third party apps you installed by pip
+```sh
+(venv)$ python3 manage.py collectstatic
+```
+
 Finally run The Geekshub Server
 ```sh
 (venv)$ python3 manage.py runserver
