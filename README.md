@@ -31,7 +31,7 @@ Note the `(venv)` in front of the prompt. This indicates that this terminal
 session operates in a virtual environment set up by `virtualenv`.
 
 Once `pip` has finished downloading the dependencies: <br>
-Go the `social/settings.py` file and Change  `DEBUG = True` `PRODUCTION = False`
+Go the `.env` file and Change  `DEBUG = True` `PRODUCTION = False`
 
 then you will have to migrate the db
 
