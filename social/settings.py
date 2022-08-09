@@ -121,7 +121,7 @@ WSGI_APPLICATION = 'social.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-if PRODUCTION:
+if PRODUCTION == "True":
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -195,7 +195,10 @@ MEDIA_URL = '/media/'
 
 
 # Path where media is stored
-MEDIA_ROOT = os.path.join(BASE_DIR_ROOT, 'media/')
+if PRODUCTION == "True":
+    MEDIA_ROOT = os.path.join(BASE_DIR_ROOT, 'media/')
+else:
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 
 # Default primary key field type
