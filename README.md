@@ -32,6 +32,13 @@ session operates in a virtual environment set up by `virtualenv`.
 Once `pip` has finished downloading the dependencies: <br>
 Go the `social/settings.py` file and Change  `DEBUG = True` `PRODUCTION = False`
 
+then you will have to migrate the db
+
+
+```sh
+(venv)$ python3 manage.py migrate --run-syncdb
+```
+
 ```sh
 (venv)$ python3 manage.py runserver
 ```
