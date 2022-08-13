@@ -1,0 +1,544 @@
+{% extends 'home_base.html' %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'create_post/style.css' %}">
+<style>
+
+.find-friends {
+  background-color: #1B74E4;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 11px;
+  outline: none;
+}
+#follow-button{
+  padding-left: 200px!important;
+  padding-right: 0px!important;
+}
+  #follow-more{
+    padding-left: 90px!important;
+    padding-right: 0px!important;
+    font-size: 14.5px!important;
+  }
+  @media screen and (max-width: 700px) {
+    #no-more{
+    padding-right: 0px!important;
+    padding-left: 120px!important;
+  }
+  #follow-more{
+    padding-left: 30px!important;
+    padding-right: 0px!important;
+    font-size: 10.5px!important;
+  }
+  #follow-button{
+  padding-left: 100px!important;
+  padding-right: 0px!important
+}
+#save_warning{
+  text-align: center;
+}
+}
+#button-fav{
+  background-color: Transparent;
+  border: none;
+  cursor:pointer;
+  font-size: large;
+  outline: none;
+}
+#commentsLink{
+  color: #B0B3B8;
+}
+.no-posts-saved{
+  border-radius: 15px!important;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+@media screen and (max-width: 700px) {
+  .no-posts-saved{
+    border-radius: 0px!important;
+  }
+}
+
+</style>
+
+{% if theme == "Light Mode" %}
+  <style>
+    body, .navbar {
+      background-color: #ffffff!important;
+    }
+    #save_warning{
+      font-size: 12px; color: #4d4d4f; padding-bottom: 1em;
+    }
+    #no-posts-saved{
+      color: #65676B;
+    }
+  </style>
+{% endif %}
+{% if theme == "Dark Mode" %}
+  <style>
+    body, .navbar {
+      background-color: #18191A!important;
+      color: #e4e6eb!important;
+    }
+
+    .top h3{
+      color: #e4e6eb!important;
+    }
+
+    .nav-item i, .dot .fa-pen-to-square{
+      color: #e4e6eb!important;
+    }
+    #post{
+      background-color: #242526!important;
+    }
+    .searchbar input{
+      background-color: #242526!important;
+      color: white;
+    }
+
+    .likes{
+      color: #B0B3B8!important;
+    }
+    .likes, .comments{
+      color: #B0B3B8!important;
+    }
+    .message b{
+      color:#E4E6EB!important;
+    }
+    .actionBtns svg{
+      fill: #E4E6EB!important;
+    }
+    .logo h3 {
+      color: #E4E6EB!important;
+    }
+    .pagination a {
+      color: #B0B3B8!important;
+    }
+    .pagination a:hover:not(.active) {
+      background-color: #242526!important;
+      color: white!important;
+    }
+    #save_warning{
+      font-size: 12px; color: #B0B3B8; padding-bottom: 1em;
+    }
+    #no-posts-saved{
+      color: #B0B3B8;
+    }
+
+    </style>
+{% endif %}
+
+<main>
+
+    <div class="container">
+      <div class="col-9 infinite-container">
+
+          {% if fav_posts_length != 0 %}
+          <div id="save_warning">
+            Only you can see what you've saved
+          </div>
+          {% endif %}
+
+        {% for post in fav_posts %}
+
+        <div class="card infinite-iteam" id="post">
+          <div class="top">
+            <a href="{% url 'accounts:profile' post.author.id %}">
+            <div class="userDetails">
+              <div class="profilepic">
+                <div class="profile_img">
+                  <div class="image">
+                    {% for image in accounts_profile_image %}
+                    {% if post.author.id == image.author.id %}
+                    <img src="{{ image.image.url }}" alt="">
+                    {% endif %}
+                    {% endfor %}
+
+                  </div>
+
+                </div>
+              </div>
+              <h3>{{ post.author }}<br></h3>
+            </div>
+            </a>
+            {% if request.user.id == post.author.id %}
+            <div>
+              <a href="{% url 'posts:edit' post.id %}" style="color: black;"><span class="dot" style="padding: 1em;" title="Click to edit the post"><i class="fa-solid fa-pen-to-square"></i></span></a>
+              <a style="color: red;" href="{% url 'posts:delete' post.id %}"><span class="dot"><i class="fa-solid fa-trash" title="Click to delete the post"></i></span></a>
+            </div>
+            {% endif %}
+          </div>
+          <a href="{% url 'posts:post' post.id %}">
+          <div class="imgBx">
+            <img src="{{ post.image.url }}" alt="post-1" class="cover">
+          </div>
+          </a>
+          <div class="bottom">
+            <div class="actionBtns">
+              <div class="left">
+                <form method="POST" id="like-form-{{ post.id }}" onclick="changeLikeColor_{{ post.id }}()">
+                  {% csrf_token %}
+                  <input type="text" style="display: none;" name="post_id" required="" value="{{ post.id }}" id="id_post_id-{{ post.id }}">
+                  
+                  <input type="text" style="display: none;" name="post_author-{{ post.id }}" required="" value="{{ post.author.id }}" id="post_author-{{ post.id }}">
+ 
+                  <button id="button-like">
+                  <span class="heart" >
+                  <span>
+                    <svg aria-label="Like" id="heart-{{ post.id }}" color="#262626" fill="#262626" height="24" role="img" viewBox="0 0 48 48"
+                      width="24">
+                      <path
+                        d="M34.6 6.1c5.7 0 10.4 5.2 10.4 11.5 0 6.8-5.9 11-11.5 16S25 41.3 24 41.9c-1.1-.7-4.7-4-9.5-8.3-5.7-5-11.5-9.2-11.5-16C3 11.3 7.7 6.1 13.4 6.1c4.2 0 6.5 2 8.1 4.3 1.9 2.6 2.2 3.9 2.5 3.9.3 0 .6-1.3 2.5-3.9 1.6-2.3 3.9-4.3 8.1-4.3m0-3c-4.5 0-7.9 1.8-10.6 5.6-2.7-3.7-6.1-5.5-10.6-5.5C6 3.1 0 9.6 0 17.6c0 7.3 5.4 12 10.6 16.5.6.5 1.3 1.1 1.9 1.7l2.3 2c4.4 3.9 6.6 5.9 7.6 6.5.5.3 1.1.5 1.6.5.6 0 1.1-.2 1.6-.5 1-.6 2.8-2.2 7.8-6.8l2-1.8c.7-.6 1.3-1.2 2-1.7C42.7 29.6 48 25 48 17.6c0-8-6-14.5-13.4-14.5z">
+                      </path>
+                    </svg>
+                  </span>
+                </span>
+                  </button>
+              </form>
+              <a href="{% url 'posts:post' post.id %}#Comments">
+                <svg aria-label="Comment" class="_8-yf5 " color="#262626" fill="#262626" height="24" role="img"
+                  viewBox="0 0 48 48" width="24">
+                  <path clip-rule="evenodd"
+                    d="M47.5 46.1l-2.8-11c1.8-3.3 2.8-7.1 2.8-11.1C47.5 11 37 .5 24 .5S.5 11 .5 24 11 47.5 24 47.5c4 0 7.8-1 11.1-2.8l11 2.8c.8.2 1.6-.6 1.4-1.4zm-3-22.1c0 4-1 7-2.6 10-.2.4-.3.9-.2 1.4l2.1 8.4-8.3-2.1c-.5-.1-1-.1-1.4.2-1.8 1-5.2 2.6-10 2.6-11.4 0-20.6-9.2-20.6-20.5S12.7 3.5 24 3.5 44.5 12.7 44.5 24z"
+                    fill-rule="evenodd"></path>
+                </svg>
+              </a>
+                <svg height="0.1">
+
+                </svg>
+              </div>
+              <div class="right">
+                <form method="POST" id="Favorite-form-{{ post.id }}" onclick="changeFavoriteColor_{{ post.id }}()">
+                {% csrf_token %}
+                <button id="button-fav">
+                
+                <svg aria-label="Save" class="_8-yf5" id="Addfavorite-{{ post.id }}"  color="#262626" fill="#262626" height="24" role="img" viewBox="0 0 48 48" width="24">
+                  <path d="M43.5 48c-.4 0-.8-.2-1.1-.4L24 29 5.6 47.6c-.4.4-1.1.6-1.6.3-.6-.2-1-.8-1-1.4v-45C3 .7 3.7 0 4.5 0h39c.8 0 1.5.7 1.5 1.5v45c0 .6-.4 1.2-.9 1.4-.2.1-.4.1-.6.1zM24 26c.8 0 1.6.3 2.2.9l15.8 16V3H6v39.9l15.8-16c.6-.6 1.4-.9 2.2-.9z">
+                  </path>
+                </svg>
+                </button>
+                </form>
+              </div>
+            </div>
+            <a>
+              <span class="likes" id="max_length_{{ post.id }}"></span><span class="likes"> Likes</span>
+            </a>
+            <a>
+              {% if post.body|length >= 50 %}
+              <p class="message"><b>{{ post.body|slice:50 }}...</b> 
+              {% else %}
+              <p class="message"><b>{{ post.body }}</b> 
+              {% endif %}
+              </p>
+            </a>
+              <h4 class="comments" id="viewcomments_{{ post.id }}">View All Unknown Comments</h4>
+            <a>
+              <h5 class="postTime" id="postTime-{{ post.id }}">{{ post.created_on }}</h5>
+            </a>
+
+
+          <div id=""></div>
+          <br>
+          </div>
+          </a>
+          </div>
+
+
+        <script>
+          // Likes Max length
+          max_length_{{ post.id }} = "{% for max_like in max_likes %}{% if max_like.post_id == post.id %}{{ max_like.the_count }}{% endif %}{% endfor %}";
+          if(max_length_{{ post.id }} == "" || max_length_{{ post.id }}.length == 0){
+            max_length_{{ post.id }} = 0;
+          }
+
+          document.getElementById("max_length_{{ post.id }}").innerHTML = max_length_{{ post.id }};
+
+
+
+          // Comments Max length
+          var max_comments_{{ post.id }} = "{% for comment_lenth in comments_lenth %}{% if comment_lenth.post_id == post.id %}{{ comment_lenth.the_count }}{% endif %}{% endfor %}"
+          if(max_comments_{{ post.id }} == "" || max_comments_{{ post.id }}.length == 0){
+            max_comments_{{ post.id }} = 0;
+          }
+            
+          max_comments_{{ post.id }} = max_comments_{{ post.id }}
+          document.getElementById('viewcomments_{{ post.id }}').innerHTML = '<a href="{% url 'posts:post' post.id %}#Comments" id="commentsLink">' + "View all " + max_comments_{{ post.id }} + " comments" + "</a>";
+        </script>
+
+        <script type="text/javascript">
+          function websiteTimezonetoEgypt(offset){
+          var b=new Date()
+          var utc=b.getTime()+(b.getTimezoneOffset()*60000);
+          var time=new Date(utc+(3600000*offset));
+          return time.toLocaleString();
+          }
+          date_now = websiteTimezonetoEgypt('+2');
+          $(document).on('submit','#like-form-{{ post.id }}',function(e){
+              e.preventDefault();
+              $.ajax({
+                  type:'POST',
+                  url:'{{ request.path }}',
+                  data:
+                  {
+                      datenow: date_now,
+                      post_like_id:$("#id_post_id-{{ post.id }}").val(),
+                      post_author:$("#post_author-{{ post.id }}").val(),
+                      csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                  },
+                  success:function(){}
+              })
+              });
+        </script>
+
+
+<script>
+
+  $(document).on('submit','#Favorite-form-{{ post.id }}',function(e){
+    e.preventDefault();
+    $.ajax({
+        type:'POST',
+        url:'{{ request.path }}',
+        data:
+        {
+            post_fav_id:$("#id_post_id-{{ post.id }}").val(),
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success:function(){}
+    })
+    });
+
+</script>
+
+
+
+
+<script>
+cheek_user_{{ post.id }} = null
+</script>
+{% for like_user in cheek_like_user  %}
+{% if like_user.post_id == post.id %}
+<script>
+  cheek_user_{{ post.id }} = 1
+</script>
+{% endif %}
+{% endfor %}
+
+
+<script>
+cheek_fav_{{ post.id }} = null
+</script>
+{% for fav_user in cheek_fav_user  %}
+{% if fav_user.post_id == post.id %}
+<script>
+  cheek_fav_{{ post.id }} = 1
+</script>
+{% endif %}
+{% endfor %}
+  
+
+
+
+<script>
+  if(cheek_user_{{ post.id }} == null) {
+    cheek_user_{{ post.id }} = 0
+  }
+  if(cheek_fav_{{ post.id }} == null) {
+    cheek_fav_{{ post.id }} = 0
+  }
+</script>
+
+
+{% comment %} Check Like BTN Color {% endcomment %}
+<script>
+  function changeLikeColor_{{ post.id }}() {
+    max_likes = document.getElementById("max_length_{{ post.id }}");
+    // Like
+    if (cheek_user_{{ post.id }} == "0") {
+      cheek_user_{{ post.id }} = "1";
+      document.getElementById("heart-{{ post.id }}").style = "fill: red!important;";
+      max_likes.innerHTML = parseFloat(max_likes.innerHTML) + 1;
+    } else {
+      // Dislike
+      cheek_user_{{ post.id }} = "0";
+      {% if theme == "Dark Mode" %}
+      document.getElementById("heart-{{ post.id }}").style = "fill: #E4E6EB!important;";
+      {% else %}
+      document.getElementById("heart-{{ post.id }}").style = "fill: #262626!important;";
+      {% endif %}
+
+      max_likes.innerHTML = max_likes.innerHTML - 1;
+    }
+  }
+</script>
+<script>
+    if (cheek_user_{{ post.id }} == "0") {
+      {% if theme == "Dark Mode" %}
+      document.getElementById("heart-{{ post.id }}").style = "fill: #E4E6EB!important;";
+      {% else %}
+      document.getElementById("heart-{{ post.id }}").style = "fill: #262626!important;";
+      {% endif %}
+    } else {
+      // Dislike
+      document.getElementById("heart-{{ post.id }}").style = "fill: red!important;";
+    }
+</script>
+
+
+
+{% comment %} Check Fav BTN Color {% endcomment %}
+<script>
+  function changeFavoriteColor_{{ post.id }}() {
+    // Like
+    if (cheek_fav_{{ post.id }} == "0") {
+      cheek_fav_{{ post.id }} = "1";
+      document.getElementById("Addfavorite-{{ post.id }}").style = "fill: #ebeb09!important;";
+    } else {
+      // Dislike
+      cheek_fav_{{ post.id }} = "0";
+      {% if theme == "Dark Mode" %}
+      document.getElementById("Addfavorite-{{ post.id }}").style = "fill: #E4E6EB!important;";
+      {% else %}
+      document.getElementById("Addfavorite-{{ post.id }}").style = "fill: #262626!important;";
+      {% endif %}
+    }
+  }
+</script>
+<script>
+    if (cheek_fav_{{ post.id }} == "0") {
+      {% if theme == "Dark Mode" %}
+      document.getElementById("Addfavorite-{{ post.id }}").style = "fill: #E4E6EB!important;";
+      {% else %}
+      document.getElementById("Addfavorite-{{ post.id }}").style = "fill: #262626!important;";
+      {% endif %}
+    } else {
+      // Dislike
+      document.getElementById("Addfavorite-{{ post.id }}").style = "fill: #ebeb09!important;";
+    }
+</script>
+
+
+
+<script>
+
+    function doTime(then) {
+      // Convert Timezone to egypt
+      function websiteTimezonetoEgypt(offset){
+        var b=new Date()
+        var utc=b.getTime()+(b.getTimezoneOffset()*60000);
+        var time=new Date(utc+(3600000*offset));
+        return time.toLocaleString();
+      }
+
+      now = new Date(websiteTimezonetoEgypt('+2'));
+      then = new Date(then);
+      difference = (now - then);
+
+      years = Math.floor(difference / (60 * 60 * 1000 * 24 * 365) * 1);  
+      days = Math.floor(difference / (60 * 60 * 1000 * 24) * 1);
+      hours = Math.floor((difference % (60 * 60 * 1000 * 24)) / (60 * 60 * 1000) * 1);
+      mins = Math.floor(((difference % (60 * 60 * 1000 * 24)) % (60 * 60 * 1000)) / (60 * 1000) * 1);
+
+      if (years != 0) {
+        document.getElementById('postTime-{{ post.id }}').innerHTML = years + ' Years ago';
+      }
+      if (years == 0 && days != 0) {
+        document.getElementById('postTime-{{ post.id }}').innerHTML = days + ' Days ago';
+      }
+      if (years == 0 && days == 0 && hours != 0) {
+        document.getElementById('postTime-{{ post.id }}').innerHTML = hours + ' Hours ago';
+      }
+      if (years == 0 && days == 0 && hours == 0 && mins != 0) {
+        document.getElementById('postTime-{{ post.id }}').innerHTML = mins + ' Minutes ago';
+      }
+      if (years == 0 && days == 0 && hours == 0 && mins == 0) {
+        document.getElementById('postTime-{{ post.id }}').innerHTML = "Justnow"; 
+      }
+    }
+
+    doTime('{{ post.created_on }}');
+
+</script>
+
+{% endfor %}
+
+{% if fav_posts_length == 0 %}
+<div class="card no-posts-saved" id="post">
+  <br>
+  <h3   id="no-posts-saved">You do not have any saved items.</h3>
+  <br>
+</div>
+{% endif %}
+
+
+
+{% if fav_posts.has_previous or fav_posts.has_next %}
+<!-- Pagination -->
+<center>
+  <div class="pagination">
+    {% if fav_posts.has_previous %}
+    <a href="?page={{ fav_posts.previous_page_number }}">&laquo;</a>
+    {% endif %}
+    {% for n in fav_posts.paginator.page_range %}
+    {% if fav_posts.number == n %}
+    <a class="active">{{ n }}</a>
+    {% elif n > fav_posts.number|add:'-3' and n < fav_posts.number|add:'3' %}
+    <a href="?page={{ n }}">{{ n }}</a>
+    {% endif %}
+    {% endfor %}
+    {% if fav_posts.has_next %}
+    <a href="?page={{ fav_posts.next_page_number }}">&raquo;</a>
+    {% endif %}
+  </div>
+</center>
+{% endif %}
+
+
+</div>
+      <div class="col-3">
+        <h4>Top Followers</h4>
+        {% for suggestion in suggestions_id %}
+        {% for suggestion_data in suggestions_data %}
+        {% if suggestion_data.id == suggestion %}      
+        <div class="card" style="margin: 0.1px;">
+          <div class="top">
+            <div class="userDetails">
+              <div class="profilepic">
+                <div class="profile_img">
+                  <div class="image">
+                    
+                    {% for image in suggestions_image %}
+                    {% if image.author.id == suggestion_data.id  %}
+                    <a href="{% url 'accounts:profile' suggestion_data.id %}">
+                    <img src="{{ image.image.url }}" alt="">
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+              <a href="{% url 'accounts:profile' suggestion_data.id %}">
+              <h3>{{ suggestion_data.username }}<br><span>Popular</span></h3>
+              </a>
+            </div>
+
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+      
+      </div>
+</main>
+
+
+{% endblock %}
