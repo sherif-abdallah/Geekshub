@@ -15,6 +15,7 @@ Geekshub is a Website which allows users, who sign-up for free profiles, to conn
 5. Jquery
 6. Ajax
 7. Bootstrap
+8. Goormide Cloud
 
 
 ## How to run
