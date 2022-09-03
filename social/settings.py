@@ -120,7 +120,6 @@ WSGI_APPLICATION = 'social.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
 if PRODUCTION == "True":
     DATABASES = {
         'default': {
@@ -170,15 +169,11 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
-
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
@@ -187,19 +182,14 @@ STATICFILES_DIRS = [
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
-
-
-
 # Base url to serve media files
 MEDIA_URL = '/media/'
-
 
 # Path where media is stored
 if PRODUCTION == "True":
     MEDIA_ROOT = os.path.join(BASE_DIR_ROOT, 'media/')
 else:
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -209,11 +199,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-
-
 SOCIALACCOUNT_LOGIN_ON_GET = True
-
-
 
 # SMTP Configration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
