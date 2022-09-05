@@ -6,12 +6,13 @@ class Messages_Inbox(models.Model):
     to_user = models.ForeignKey('auth.User', related_name='msgToUser',on_delete=models.CASCADE)
     date_utc = models.CharField(max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now_add=True)
+
     msg = models.TextField(max_length=1000, null=True,blank=True)
     seen = models.BooleanField(default=False)
     seen_home = models.BooleanField(default=False)
     voice_file = models.FileField(upload_to='voice_files/', null=True, blank=True)
     voice_file_duration = models.IntegerField(null=True, blank=True)
-
 
     class Meta:
         verbose_name = 'Private Message'

@@ -17,7 +17,7 @@ class Notifications(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="noti_to_user")
 	notification_type = models.IntegerField(choices=NOTIFICATION_TYPES)
 	text_preview = models.CharField(max_length=90, blank=True)
-	date = models.CharField(max_length=10000)
+	date = models.DateField(auto_now_add=True)
 	is_seen = models.BooleanField(default=False)
 
 	class Meta:

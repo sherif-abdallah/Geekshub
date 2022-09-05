@@ -12,7 +12,7 @@ from posts.models import *
 from notifications.models import *
 from social.defMain import *
 
-# Create your views here.
+# that is not good you have to create a wrapper of user abstract user
 def register(request):
 
     if request.method == "POST":
