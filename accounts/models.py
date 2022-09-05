@@ -1,33 +1,40 @@
-from PIL import Image
+from unicodedata import name
 from django.db import models
-from django.contrib.auth.models import User, AbstractUser
-from django.db.models import Count
-
+# comment this line for now from django.contrib.auth.models import User, AbstractUser
 
 # Create your models here.
 THEME_CHOICE = (
     ('Light Mode', 'Light Mode'),
     ('Dark Mode', 'Dark Mode'),
 )
-class Profile_picture(models.Model):
-    author = models.ForeignKey('auth.User', on_delete=models.CASCADE , null=False, blank=False)
-    image = models.ImageField(upload_to="", default='posts/default.jpg')
+
+#model for profile setting
+class Setting(models.Model):
     theme = models.CharField(max_length=1000, choices=THEME_CHOICE, default='Light Mode')
-    class Meta:
-        verbose_name = 'Profile Picture'
-        verbose_name_plural = 'Profile Pictures'
-        ordering = ['id']
-    def __str__(self):
-        return self.author.username + " Profile Picture" + " - " + self.theme
+    profile=models.OneToOneField()
 
 
-class Follow(models.Model):
-    follower = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='follower')
-    following = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name="following")
-    class Meta:
-        verbose_name = 'Frined'
-        verbose_name_plural = 'Friends'
-        ordering = ['id']
+#models for groups
+class Group(models.Model):
+    name=models.CharField(max_length=100)
+    bio=models.TextField(null=True,blank=True)
+    created_on=models.DateField(auto_now_add=True)
+    website=models.URLField(null=True,blank=True)
+    members=models.ManyToManyField("profile", related_name = 'member',symmetrical=False)
+    def __str__(self) -> str:
+        return  self.name
+
+#models for user profile
+class  Profile(models.Model):
+    user=models.OneToOneField('auth.User',on_delete=models.CASCADE)
+    pseudo=models.CharField(max_length=100)
+    bio=models.TextField(null=True,blank=True)
+    website=models.URLField(blank=True,null=True)
+    inscription_date=models.DateField(auto_now_add=True)
+    Profile_picture=models.ImageField(upload_to="profile",default="posts/default.jpg")
+    follows = models.ManyToManyField("self", related_name = 'follows',symmetrical=False)
     
-    def __str__(self):
-        return self.follower.username + " is following " + self.following.username
+
+    setting=models.OneToOneField(Setting,on_delete=models.CASCADE)
+    def __str__(self) -> str:
+        return self.pseudo

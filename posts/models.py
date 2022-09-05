@@ -1,13 +1,11 @@
-from PIL import Image
 from django.db import models
-from django.contrib.auth.models import User
 
 # Create your models here.
 class Post(models.Model):
     author = models.ForeignKey('auth.User', on_delete=models.CASCADE , null=False, blank=False)
     body = models.TextField()
-    image = models.ImageField(upload_to="posts/", null=True, blank=True)
-    created_on = models.CharField(max_length=10000)
+    image = models.ImageField(upload_to="posts/", null=True, blank=True)#let's work now with image but will will update this later
+    created_on = models.DateField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Post'
@@ -20,7 +18,7 @@ class Post(models.Model):
 class Post_Like(models.Model):
     liker = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    
+    like_date=models.DateTimeField(auto_now_add=True)
     class Meta:
         verbose_name = 'Like'
         verbose_name_plural = 'Likes'
@@ -36,9 +34,9 @@ class Post_Comments(models.Model):
     commenter = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     comment_body = models.TextField()
-
-    creared_on = models.CharField(max_length=1000)
-
+    #dates
+    comment_date = models.DateField(auto_now_add=True)
+    edit_date=models.DateTimeField(auto_now_add=True)
     class Meta:
         verbose_name = 'Comment'
         verbose_name_plural = 'Comments'
